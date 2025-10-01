@@ -1,9 +1,10 @@
 import cv2
 import numpy as np
 import sys
+import os
 
 if len(sys.argv) < 2:
-    print("Adicione o nome da imagem.")
+    print("Adicione o path da imagem.")
     sys.exit(1) 
 
 img_path = sys.argv[1]
@@ -42,4 +43,15 @@ t_opt = np.argmax(sigma2_list)
 img_binary = img > t_opt 
 img_binary = img_binary.astype(np.uint8) * 255
 
-cv2.imwrite("resultado_otsu.jpg", img_binary)
+
+out_dir = "img_bin"
+os.makedirs(out_dir, exist_ok=True)
+
+base_name = os.path.basename(img_path)
+img_name, img_ext = os.path.splitext(base_name)
+
+name_result = f"{img_name}_bin{img_ext}"
+
+out_path = os.path.join(out_dir, name_result)
+
+cv2.imwrite(out_path, img_binary)
