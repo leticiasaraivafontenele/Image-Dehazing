@@ -6,8 +6,10 @@ from BCP import bright_channel_prior
 from DCP import dark_channel_prior
 from fuse_transmission_and_atmospheric_light import fuse_transmission_and_atmospheric_light
 from recover_image import recover_image
+from guided_filter import guided_filter  # 👈 ADICIONAR IMPORT
 
-def single_image_dehazing(img_path, window_size=15, k=0.1, omega=0.95):
+def single_image_dehazing(img_path, window_size=15, k=0.1, omega=0.90, 
+                          use_guided_filter=True, guided_radius=60, guided_eps=0.001):
     """
     Pipeline completo do Algorithm 1 do artigo.
     
@@ -15,7 +17,10 @@ def single_image_dehazing(img_path, window_size=15, k=0.1, omega=0.95):
         img_path: Caminho da imagem com neblina
         window_size: Tamanho da janela (padrão 15)
         k: Fator de ajuste BCP (0.05-0.15)
-        omega: Parâmetro DCP (padrão 0.95)
+        omega: Parâmetro DCP (padrão 0.90, reduzido de 0.95)
+        use_guided_filter: Se True, aplica refinamento com guided filter
+        guided_radius: Raio do guided filter (padrão 60)
+        guided_eps: Epsilon do guided filter (padrão 0.001)
     
     Returns:
         J: Imagem sem neblina
@@ -43,6 +48,28 @@ def single_image_dehazing(img_path, window_size=15, k=0.1, omega=0.95):
     # Passo 2.2: BCP para região do céu
     print("\n[Passo 2.2] Bright Channel Prior (céu)...")
     t_bright, A_bright = bright_channel_prior(img_rgb, sky_mask, window_size, k)
+    
+    # 👇 ADICIONAR REFINAMENTO COM GUIDED FILTER
+    if use_guided_filter:
+        print("\n[Refinamento] Aplicando Guided Filter...")
+        
+        # Preparar imagem guia (grayscale normalizada)
+        img_gray = cv2.cvtColor(img_rgb.astype(np.uint8), cv2.COLOR_RGB2GRAY)
+        img_gray = img_gray.astype(np.float64) / 255.0
+        
+        # Refinar t_dark
+        print("  - Refinando t_DCP...")
+        t_dark_refined = guided_filter(img_gray, t_dark.astype(np.float64), 
+                                       radius=guided_radius, eps=guided_eps)
+        t_dark = np.clip(t_dark_refined, 0.1, 1.0)
+        
+        # Refinar t_bright
+        print("  - Refinando t_BCP...")
+        t_bright_refined = guided_filter(img_gray, t_bright.astype(np.float64), 
+                                         radius=guided_radius, eps=guided_eps)
+        t_bright = np.clip(t_bright_refined, 0.0, 1.0)
+        
+        print("  ✓ Refinamento concluído")
     
     # Passo 3: Fusão
     print("\n[Passo 3] Fusão dos mapas...")
@@ -112,16 +139,19 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         img_path = sys.argv[1]
     else:
-        img_path = "/home/leticia/faculdade/pdi/SOTS/outdoor/hazy/0047_0.9_0.12.jpg"
+        img_path = r"D:\dataset\SOTS\outdoor\hazy\0047_0.9_0.12.jpg"
     
     print(f"Processando: {img_path}\n")
     
-    # Processar imagem
+    # 👇 PARÂMETROS ATUALIZADOS
     J, resultados = single_image_dehazing(
         img_path=img_path,
         window_size=15,
         k=0.1,
-        omega=0.95
+        omega=0.90,  # 👈 Reduzido de 0.95 para 0.90
+        use_guided_filter=True,  # 👈 Ativar guided filter
+        guided_radius=60,
+        guided_eps=0.001  # 👈 Aumentado de 0.0001 para 0.001
     )
     
     # Visualizar resultados
