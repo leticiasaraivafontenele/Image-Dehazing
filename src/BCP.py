@@ -73,8 +73,7 @@ def bright_channel_prior(img_rgb, sky_mask, window_size=15, k=0.1, refine=True, 
         
         # Aplicar guided filter
         from guided_filter import guided_filter
-        t_bright = guided_filter(img_gray, t_bright.astype(np.float64), 
-                                 radius=guided_radius, eps=guided_eps)
+        t_bright = guided_filter(img_gray, t_bright.astype(np.float64), radius=guided_radius, eps=guided_eps)
         t_bright = np.clip(t_bright, 0.0, 1.0)
     
     return t_bright, A_bright

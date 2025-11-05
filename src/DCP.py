@@ -62,8 +62,7 @@ def dark_channel_prior(img_rgb, sky_mask, window_size=15, omega=0.95, refine=Tru
         
         # Aplicar guided filter
         from guided_filter import guided_filter
-        t_dark = guided_filter(img_gray, t_dark.astype(np.float64), 
-                               radius=guided_radius, eps=guided_eps)
+        t_dark = guided_filter(img_gray, t_dark.astype(np.float64), radius=guided_radius, eps=guided_eps)
         t_dark = np.clip(t_dark, 0.1, 1.0)
     
     return t_dark, A_dark
