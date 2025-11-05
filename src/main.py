@@ -8,8 +8,8 @@ from fuse_transmission_and_atmospheric_light import fuse_transmission_and_atmosp
 from recover_image import recover_image
 from guided_filter import guided_filter  # 👈 ADICIONAR IMPORT
 
-def single_image_dehazing(img_path, window_size=15, k=0.1, omega=0.90, 
-                          use_guided_filter=True, guided_radius=60, guided_eps=0.001):
+def single_image_dehazing(img_path, window_size=15, k=0.1, omega=0.95, 
+                          use_guided_filter=True, guided_radius=60, guided_eps=0.0001):
     """
     Pipeline completo do Algorithm 1 do artigo.
     
@@ -148,10 +148,10 @@ if __name__ == "__main__":
         img_path=img_path,
         window_size=15,
         k=0.1,
-        omega=0.90,  # 👈 Reduzido de 0.95 para 0.90
+        omega=0.95,  # 👈 Reduzido de 0.95 para 0.90
         use_guided_filter=True,  # 👈 Ativar guided filter
         guided_radius=60,
-        guided_eps=0.001  # 👈 Aumentado de 0.0001 para 0.001
+        guided_eps=0.0001  # 👈 Aumentado de 0.0001 para 0.001
     )
     
     # Visualizar resultados
