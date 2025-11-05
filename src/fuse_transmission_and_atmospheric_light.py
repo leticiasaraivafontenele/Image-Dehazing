@@ -36,28 +36,28 @@ def fuse_transmission_and_atmospheric_light(t_dark, t_bright, A_dark, A_bright, 
     # Calcular σ (sigma) - parâmetro adaptativo
     # σ = (1/10^e) - (z/(H×W - Z)) - 0.05
     e = np.e
-    base_sigma = (1 / (10 ** e))
+    # base_sigma = (1 / (10 ** e))
     
     sigma = np.zeros_like(t_dark)
     
     # Para região do céu
     if Z > 0:
-        sigma_sky = base_sigma - (Z / max(non_sky_pixels, 1)) - 0.05
+        sigma_sky = (1 / 10 ) *( e**( - (Z / max(non_sky_pixels, 1)))) - 0.05
         sigma[sky_mask] = sigma_sky
         print(f"σ (céu): {sigma_sky:.6f}")
     
     # Para região não-céu
     if non_sky_pixels > 0:
-        sigma_non_sky = base_sigma - (Z / max(non_sky_pixels, 1)) - 0.05
+        sigma_non_sky = (1 / 10 ) *( e**( - (Z / max(non_sky_pixels, 1)))) - 0.05
         sigma[~sky_mask] = sigma_non_sky
         print(f"σ (não-céu): {sigma_non_sky:.6f}")
     
     # Limitar sigma ao intervalo [-0.05, 0.05]
-    sigma = np.clip(sigma, -0.05, 0.05)
+    # sigma = np.clip(sigma, -0.05, 0.05)
     
     # Equação (14): t(q) = λ·t_bright(q) + (1-λ)·t_dark(q) - σ
     t_fused = lambda_weight * t_bright + (1 - lambda_weight) * t_dark - sigma
-    t_fused = np.clip(t_fused, 0.1, 1.0)
+    # t_fused = np.clip(t_fused, 0.1, 1.0)
     
     # Equação (15): A = λ·A_DCP + (1-λ)·A_bright
     A_fused = lambda_weight * A_dark + (1 - lambda_weight) * A_bright
