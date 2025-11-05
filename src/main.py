@@ -112,7 +112,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         img_path = sys.argv[1]
     else:
-        img_path = "/home/leticia/faculdade/pdi/SOTS/outdoor/hazy/0047_0.9_0.12.jpg"
+        img_path = r"D:\dataset\SOTS\outdoor\hazy\0047_0.9_0.12.jpg"
     
     print(f"Processando: {img_path}\n")
     
