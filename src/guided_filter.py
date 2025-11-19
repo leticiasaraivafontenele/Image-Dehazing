@@ -1,19 +1,7 @@
 import cv2
 
 def guided_filter(I, p, radius=60, eps=0.0001):
-    """
-    Implementação do Guided Filter para refinar mapas de transmissão.
-    Baseado em: He et al. "Guided Image Filtering" (ECCV 2010)
-    
-    Args:
-        I: Imagem guia (grayscale)
-        p: Imagem a ser filtrada
-        radius: Raio da janela
-        eps: Parâmetro de regularização
-    
-    Returns:
-        q: Imagem filtrada
-    """
+
     mean_I = cv2.boxFilter(I, cv2.CV_64F, (radius, radius))
     mean_p = cv2.boxFilter(p, cv2.CV_64F, (radius, radius))
     mean_Ip = cv2.boxFilter(I * p, cv2.CV_64F, (radius, radius))
