@@ -40,11 +40,12 @@ def dark_channel_prior(img_rgb, sky_mask, window_size=15, omega=0.95):
         np.argsort(dark_channel_non_sky.ravel())[-num_top:], 
         dark_channel.shape
     )
-    A_dark = np.mean(img_rgb[indices], axis=0)
+    A_dark = np.mean(I_norm[indices], axis=0)
     
     # Equação (8): t_DCP(q) = 1 - ω * min(I^c(y)/A^c)
     A_dark_safe = np.maximum(A_dark, 1e-6)
-    I_normalized = img_rgb / A_dark_safe
+    I_normalized = I_norm / A_dark_safe
+    #estranho
     
     # Mínimo entre canais
     min_channel = np.min(I_normalized, axis=2)
