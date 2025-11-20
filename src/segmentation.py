@@ -15,13 +15,12 @@ def fitness_otsu(t, P):
     
     u = np.sum(np.arange(256) * P)
     
-    sigma2 = w1 * (u1 - u)**2 + w2 * (u2 - u)**2
+    sigma2 = w1 * (u1 - u)*2 + w2 * (u2 - u)*2
     
     return sigma2
 
-def otsu_pso(image_path, n_particles=500, n_iterations=400):
+def otsu_pso(img, n_particles=500, n_iterations=400):
 
-    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
     NUM = img.size
     count, _ = np.histogram(img, bins=256, range=(0, 256))
     P = count / NUM
@@ -83,15 +82,17 @@ def clear_segmentation_sky(imagem_binaria):
 def otsu_segmentation(image_path, threshold=None):
 
     img = cv2.cvtColor(image_path, cv2.COLOR_BGR2GRAY)
+
+    if len(img.shape) == 3:
+        img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    else:
+        img_gray = img
     
     if threshold is None:
-        threshold, _ = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        threshold = threshold  
+            threshold, _ = otsu_pso(img_gray)
     
     _, segmentada = cv2.threshold(img, threshold, 255, cv2.THRESH_BINARY)
     
     segmentada_limpa = clear_segmentation_sky(segmentada)
     
     return segmentada_limpa, threshold
-
-
