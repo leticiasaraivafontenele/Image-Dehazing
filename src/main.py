@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-from otsu_segmentation import otsu_segmentation
+from segmentation import otsu_segmentation
 from BCP import bright_channel_prior
 from DCP import dark_channel_prior
 from fuse_transmission_and_atmospheric_light import fuse_transmission_and_atmospheric_light
