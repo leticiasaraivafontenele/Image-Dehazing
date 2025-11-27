@@ -1,6 +1,4 @@
 import cv2
-import numpy as np
-import matplotlib.pyplot as plt
 from single_image_dehazing import single_image_dehazing
 from visualize_results import visualize_results
 
